@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"C:/state-machine-vulneratbility/build/cmake_install.cmake"
+	],
+	"Parallel" : false
+}
