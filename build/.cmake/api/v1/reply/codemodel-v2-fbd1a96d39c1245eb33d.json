@@ -39,9 +39,9 @@
 			[
 				{
 					"directoryIndex" : 0,
-					"id" : "main::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-main-Debug-4c0eb4875603174fc317.json",
-					"name" : "main",
+					"id" : "smv::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-smv-Debug-529cb6cf3928be961ee2.json",
+					"name" : "smv",
 					"projectIndex" : 0
 				}
 			]

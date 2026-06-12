@@ -8,10 +8,14 @@
 
 #pragma comment(lib, "Ws2_32.lib")
 
+int createServerSocket(char *ip);
+int createClientSocket(char *ip);
+
 int main(int argc, char **argv)
 {
 
-    std::cout << "Hello, World!" << std::endl;
+    std::cout << "Hello, World\n"
+              << std::endl;
 
     WSADATA wsaData;
 
@@ -22,8 +26,13 @@ int main(int argc, char **argv)
         std::cout << "failed to initialize winsock" << std::endl;
         return 1;
     }
+    else
+    {
+        printf("winsock has been initialized \n");
+    }
 
-    // SOCKET ListenSocket = createServerSocket(argv[1]);
+    int a = createServerSocket("8080");
+    printf("%d \n");
     // SOCKET ConnectSocket = createClientSocket(argv[1]);
 
     // iResult = bind(ListenSocket,  );
@@ -32,8 +41,9 @@ int main(int argc, char **argv)
     return 0;
 }
 
-SOCKET createServerSocket(char *ip)
+int createServerSocket(char *ip)
 {
+    printf(" skib");
     struct addrinfo *result = NULL, *ptr = NULL, hints;
 
     ZeroMemory(&hints, sizeof(hints));
@@ -47,8 +57,8 @@ SOCKET createServerSocket(char *ip)
 
     SOCKET ListenSocket = INVALID_SOCKET;
 
+    // create socket
     ListenSocket = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
-
     if (ListenSocket == INVALID_SOCKET)
     {
         printf("error at socket(): %ld\n", WSAGetLastError());
@@ -56,9 +66,12 @@ SOCKET createServerSocket(char *ip)
         WSACleanup();
         return 1;
     }
+    else
+    {
+        printf("server socket has been created \n");
+    }
 
-    printf("server socket has been created \n");
-
+    // create socket at a port
     iResult = bind(ListenSocket, result->ai_addr, (int)result->ai_addrlen);
     if (iResult)
     {
@@ -74,20 +87,37 @@ SOCKET createServerSocket(char *ip)
         freeaddrinfo(result);
     }
 
-
-    // socket is listening 
+    // socket is listening
     if (listen(ListenSocket, SOMAXCONN) == SOCKET_ERROR)
     {
         printf("listen failed with error: %ld \n", WSAGetLastError());
         closesocket(ListenSocket);
         WSACleanup();
         return 1;
+    } else {
+        printf("set up main listening server socket, its ready to forward any sockets");
     }
 
-    return ListenSocket;
+    SOCKET ClientSocket = INVALID_SOCKET;
+
+    ClientSocket = accept(ListenSocket, NULL, NULL);
+    if (ClientSocket == INVALID_SOCKET)
+    {
+        printf("accept failed: %d \n", WSAGetLastError());
+        closesocket(ListenSocket);
+        WSACleanup();
+        return 1;
+    } 
+
+    // no longer need teh server socket (optional)
+    closesocket(ListenSocket);
+
+    return 0;
 }
 
-SOCKET createClientSocket(char *ip)
+
+
+int createClientSocket(char *ip)
 {
     struct addrinfo *result = NULL, *ptr = NULL, hints;
 
@@ -105,6 +135,10 @@ SOCKET createClientSocket(char *ip)
         WSACleanup();
         return 1;
     }
+    else
+    {
+        printf("found an ip address");
+    }
 
     SOCKET ConnectSocket = INVALID_SOCKET;
 
@@ -117,7 +151,11 @@ SOCKET createClientSocket(char *ip)
         WSACleanup();
         return 1;
     }
+    else
+    {
 
-    printf("client socket has been opened \n");
-    return ConnectSocket;
+        printf("client socket has been opened \n");
+    }
+
+    return 0;
 }
