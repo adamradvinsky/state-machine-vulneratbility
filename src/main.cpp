@@ -4,7 +4,7 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>
 
-#define DEFAULT_PORT "8080"
+#define DEFAULT_PORT "27015"
 
 #pragma comment(lib, "Ws2_32.lib")
 
@@ -31,12 +31,10 @@ int main(int argc, char **argv)
         printf("winsock has been initialized \n");
     }
 
-    char port[] = {'8', '0', '8','0', '\0'};
-    //int a = createServerSocket(port);
-    
-    int b = createClientSocket(port);
-    
-    
+    //int a = createServerSocket((char *)"27015");
+
+    int b = createClientSocket((char *)"127.0.0.1");
+
     // iResult = bind(ListenSocket,  );
 
     std::cin.get();
@@ -96,7 +94,9 @@ int createServerSocket(char *ip)
         closesocket(ListenSocket);
         WSACleanup();
         return 1;
-    } else {
+    }
+    else
+    {
         printf("set up main listening server socket, its ready to forward any sockets");
     }
 
@@ -109,7 +109,33 @@ int createServerSocket(char *ip)
         closesocket(ListenSocket);
         WSACleanup();
         return 1;
-    } 
+    }
+
+    int res = 4;
+
+    // char *message = (char *)malloc(sizeof("bruh"));
+    char buffer[5];
+    do
+    {
+        res = recv(ClientSocket, buffer, 5, 0);
+
+        if (res == 0)
+        {
+            printf(" connection closed \n");
+        }
+        else if (res > 0)
+        {
+            printf("recieved bytes: %d \n", res);
+            printf("%s \n", buffer);
+        }
+        else
+        {
+            printf("connection lost \n", res);
+            closesocket(ClientSocket);
+            WSACleanup();
+        }
+
+    } while (res > 0);
 
     // no longer need teh server socket (optional)
     closesocket(ListenSocket);
@@ -117,11 +143,10 @@ int createServerSocket(char *ip)
     return 0;
 }
 
-
-
-
 int createClientSocket(char *ip)
 {
+
+    printf("anaananana \n");
     struct addrinfo *result = NULL, *ptr = NULL, hints;
 
     ZeroMemory(&hints, sizeof(hints));
@@ -143,8 +168,9 @@ int createClientSocket(char *ip)
         printf("found an ip address");
     }
 
-    SOCKET ConnectSocket = INVALID_SOCKET;
+    ptr = result;
 
+    SOCKET ConnectSocket = INVALID_SOCKET;
 
     // create socket for client
     ConnectSocket = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
@@ -160,8 +186,7 @@ int createClientSocket(char *ip)
         printf("client socket has been opened \n");
     }
 
-
-    // set up socket to 
+    // set up socket to
     iResult = connect(ConnectSocket, ptr->ai_addr, (int)ptr->ai_addrlen);
     if (iResult == SOCKET_ERROR)
     {
@@ -175,12 +200,29 @@ int createClientSocket(char *ip)
     {
         printf("couldnt connect to server");
         WSACleanup();
-    } else {
-
-        printf("the soccket is listening ayeee !!!?");
     }
-    
+    else
+    {
+        printf("the socckets are connected !!!?");
+    }
 
+    // send some data
+
+    char message[5] = {'a','b','c','d','e'};
+ 
+ 
+    int res = send(ConnectSocket, message, 5, MSG_OOB);
+    if (res == 0)
+    {
+        printf("something didnt work it didnt send");
+    }
+    else
+    {
+        printf("sent over %d amount of bytes \n", res);
+    }
+
+    closesocket(ConnectSocket);
+    WSACleanup();
 
     return 0;
 }
