@@ -3,8 +3,19 @@
 #include <limits>
 #include <winsock2.h>
 #include <ws2tcpip.h>
+#include <cstring>
 
+class Client
+{
 
-int SetUpClientSocket();
+public:
+    Client();
+    void setSocket(SOCKET socket);
+    SOCKET getSocket();
+    void sendMessage(char *message);
 
-void SendMessage(SOCKET socket); 
+private:
+    SOCKET curSocket;
+
+    int SetUpClientSocket();
+};

@@ -43,9 +43,21 @@ int main(int argc, char **argv)
     }
     else
     {
-        int skib = SetUpClientSocket();
-    }
+        Client *client = new Client();
+        printf("skibidi ! \n");
+        char text[256];
 
+        do
+        {
+            printf("send message: ");
+            std::cin >> text;
+
+            printf("going to try and send: %s \n", text);
+
+            client->sendMessage(text);
+
+        } while (text[0] != 'b');
+    }
 
     std::cout << "press enter to exit ";
     std::cin.get();

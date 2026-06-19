@@ -1,9 +1,29 @@
 #include "../include/Client.h"
-
 #define DEFAULT_PORT "27015"
 
+Client::Client()
+{
+    if (SetUpClientSocket() == 1)
+    {
+        printf("client set up successfuly \n");
+    }
+    else
+    {
+        printf("client wasnt created due to an error \n");
+    }
+}
 
-int SetUpClientSocket()
+void Client::setSocket(SOCKET newsocket)
+{
+    curSocket = newsocket;
+}
+
+SOCKET Client::getSocket()
+{
+    return curSocket;
+}
+
+int Client::SetUpClientSocket()
 {
     printf("setting up client socket \n");
     int iResult;
@@ -28,11 +48,12 @@ int SetUpClientSocket()
         printf("error at socket(): %ld\n", WSAGetLastError());
         freeaddrinfo(result);
         WSACleanup();
-        return 1;
+        return -1;
     }
     else
     {
         printf("client socket has been opened \n");
+        setSocket(ConnectSocket);
     }
 
     // connect socket
@@ -40,6 +61,7 @@ int SetUpClientSocket()
     if (iResult == SOCKET_ERROR)
     {
         closesocket(ConnectSocket);
+        setSocket(INVALID_SOCKET);
         ConnectSocket = INVALID_SOCKET;
     }
 
@@ -47,33 +69,30 @@ int SetUpClientSocket()
 
     if (ConnectSocket == INVALID_SOCKET)
     {
-        printf("couldnt connect to server");
+        printf("couldnt connect to server \n");
         WSACleanup();
+        return -1;
     }
     else
     {
-        printf("the socckets are connected !!!?");
+        printf("the socckets are connected !!!? \n");
     }
-
-    SendMessage(ConnectSocket);
-
-    return 9;
+    return 1;
 }
 
-void SendMessage(SOCKET socket)
+void Client::sendMessage(char *message)
 {
-    char message[5] = {'a', 'b', 'c', 'd', 'e'};
+    SOCKET cSocket = getSocket();
 
-    int res = send(socket, message, 5, MSG_OOB);
+    size_t strlen = std::strlen(message);
+
+    int res = send(cSocket, message, strlen, MSG_OOB);
     if (res == 0)
     {
-        printf("something didnt work it didnt send");
+        printf("something didnt work it didnt send \n");
     }
     else
     {
         printf("sent over %d amount of bytes \n", res);
     }
-
-    //closesocket(socket);
-    //WSACleanup();
 }

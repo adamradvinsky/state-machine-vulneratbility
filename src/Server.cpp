@@ -61,7 +61,7 @@ int SetUpServerSocket()
     }
     else
     {
-        printf("set up main listening server socket, its ready to forward any sockets");
+        printf("set up main listening server socket, its ready to forward any sockets \n");
     }
 
     // tangent socket for private conversation so listening socket can listen
@@ -77,10 +77,11 @@ int SetUpServerSocket()
         return 1;
     }
 
-    char buffer[5];
+    char buffer[256];
+
     do
     {
-        iResult = recv(ClientSocket, buffer, 5, 0);
+        iResult = recv(ClientSocket, buffer, 256, 0);
 
         if (iResult == 0)
         {
