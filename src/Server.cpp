@@ -1,12 +1,16 @@
 #include "../include/Server.h"
 #define DEFAULT_PORT "27015"
 
-
-Server::Server(){
-    SetUpServerSocket();
+Server::Server()
+{
+    SOCKET serverSocket = SetUpServerSocket();
+    if (serverSocket != INVALID_SOCKET)
+    {
+        ActiveServerSocket(serverSocket);
+    }
 }
 
-int Server::SetUpServerSocket()
+SOCKET Server::SetUpServerSocket()
 {
     printf("opening up a server socket \n");
     int iResult;
@@ -67,25 +71,47 @@ int Server::SetUpServerSocket()
         printf("set up main listening server socket, its ready to forward any sockets \n");
     }
 
+    return ListenSocket;
+}
+
+void Server::ActiveServerSocket(SOCKET ListenSocket)
+{
+
     // tangent socket for private conversation so listening socket can listen
 
-    SOCKET ClientSocket = INVALID_SOCKET;
-
-    ClientSocket = accept(ListenSocket, NULL, NULL);
-    if (ClientSocket == INVALID_SOCKET)
+    for (int i = 0; i < 4; i++)
     {
-        printf("accept failed: %d \n", WSAGetLastError());
-        closesocket(ListenSocket);
-        WSACleanup();
-        return 1;
+        SOCKET privateSocket = INVALID_SOCKET;
+        // listening until find a connection
+        privateSocket = accept(ListenSocket, NULL, NULL);
+        if (privateSocket == INVALID_SOCKET)
+        {
+            printf("accept failed: %d \n", WSAGetLastError());
+            closesocket(ListenSocket);
+            WSACleanup();
+            return;
+        }
+        printf("sending off a socket to a private connection with client \n");
+        PrivateServerConnection(privateSocket);
+
+        printf(" ok it returned \n");
     }
+
+    WSACleanup();
+
+    return;
+}
+
+void Server::PrivateServerConnection(SOCKET privateSocket)
+{
+    int iResult = 3;
 
     char buffer[256];
 
     do
     {
         memset(buffer, 0, 256);
-        iResult = recv(ClientSocket, buffer, 256 + 1, 0);
+        iResult = recv(privateSocket, buffer, 255, 0);
 
         if (iResult == 0)
         {
@@ -99,14 +125,8 @@ int Server::SetUpServerSocket()
         else
         {
             printf("connection lost \n", iResult);
-            closesocket(ClientSocket);
-            WSACleanup();
+            closesocket(privateSocket);
         }
 
     } while (iResult > 0);
-
-    // no longer need the server socket 
-    closesocket(ListenSocket);
-
-    return 9;
 }

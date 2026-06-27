@@ -10,6 +10,7 @@ class Server
 public:
     Server();
 private:
-    int SetUpServerSocket();
-    
+    SOCKET SetUpServerSocket();
+    void ActiveServerSocket(SOCKET ListenSocket);
+    void PrivateServerConnection(SOCKET privateSocket);
 };

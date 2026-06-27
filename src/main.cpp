@@ -28,7 +28,7 @@ int main(int argc, char **argv)
     }
     else
     {
-        printf("winsock has been initialized \n");
+        printf("winsock has been initialized llllllllllll\n");
     }
 
     char input;
@@ -58,13 +58,6 @@ int main(int argc, char **argv)
                 client->sendMessage(text);
 
             } while (text[0] != 'b');
-        }
-        else
-        {
-
-            std::cout << "press enter to exit ";
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            std::cin.get();
         }
     }
 

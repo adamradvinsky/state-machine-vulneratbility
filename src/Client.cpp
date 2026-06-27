@@ -65,16 +65,6 @@ int Client::SetUpClientSocket()
     if (ConnectSocket == INVALID_SOCKET)
     {
         printf("couldnt connect to server \n");
-        
-        printf("aaa \n");
-        printf("aaa \n");
-        printf("aaa \n");printf("aaa \n");
-        printf("aaa \n");printf("aaa \n");
-        printf("aaa \n");
-        printf("aaa \n");
-        printf("aaa \n");
-        printf("aaa \n");
-        printf("aaa \n");
         WSACleanup();
         return -1;
     }
