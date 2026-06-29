@@ -27,7 +27,7 @@ public:
 private:
     static std::vector<server> savedServers;
     static std::string name;
-    static struct addrinfo info;
+    static struct addrinfo *info;
     SOCKET curSocket;
     int connectToServer(SOCKET socket, struct addrinfo *result);
     int sendHandShake();

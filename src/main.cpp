@@ -44,21 +44,8 @@ int main(int argc, char **argv)
     else
     {
         Client *client = new Client();
-        if (client->SetUpClientSocket() == 1)
-        {
-            char text[256];
-
-            do
-            {
-                printf("send message: ");
-                std::cin >> text;
-
-                printf("going to try and send: %s \n", text);
-
-                client->sendMessage(text);
-
-            } while (text[0] != 'b');
-        }
+        
+        
     }
 
     std::cout << "press enter to exit ";

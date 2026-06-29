@@ -3,7 +3,7 @@
 
 std::vector<server> Client::savedServers;
 std::string Client::name;
-struct addrinfo Client::info;
+struct addrinfo *Client::info = NULL;
 
 Client::Client()
 {
@@ -12,9 +12,11 @@ Client::Client()
 
     if (clientSocket != INVALID_SOCKET)
     {
-        connectToServer(clientSocket, &info);
+        printf("connecting to server now \n");
+        connectToServer(clientSocket, info);
     }
 }
+
 
 void Client::setSocket(SOCKET newsocket)
 {
@@ -32,7 +34,6 @@ SOCKET Client::SetUpClientSocket()
     int iResult;
 
     // set up into about this thingy
-    struct addrinfo *result = NULL;
     struct addrinfo *ptr = NULL;
     struct addrinfo hints;
 
@@ -41,8 +42,8 @@ SOCKET Client::SetUpClientSocket()
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_protocol = IPPROTO_TCP;
 
-    iResult = getaddrinfo("127.0.0.1", DEFAULT_PORT, &hints, &result);
-    ptr = result;
+    iResult = getaddrinfo("127.0.0.1", DEFAULT_PORT, &hints, &info);
+    ptr = info;
 
     SOCKET ConnectSocket = INVALID_SOCKET;
 
@@ -51,14 +52,14 @@ SOCKET Client::SetUpClientSocket()
     if (ConnectSocket == INVALID_SOCKET)
     {
         printf("error at socket(): %ld\n", WSAGetLastError());
-        freeaddrinfo(result);
+        freeaddrinfo(info);
         WSACleanup();
         return INVALID_SOCKET;
     }
     else
     {
         printf("client socket has been opened \n");
-        setSocket(ConnectSocket);
+        ///setSocket(ConnectSocket);
         return ConnectSocket;
     }
     return INVALID_SOCKET;
@@ -66,12 +67,16 @@ SOCKET Client::SetUpClientSocket()
 
 int Client::connectToServer(SOCKET socket, struct addrinfo *result)
 {
-
+    printf("trying to connect to a server - phone \n");
     int iResult = 0;
     // connect socket
     iResult = connect(socket, result->ai_addr, (int)result->ai_addrlen);
+
+    printf("tried to connect to socket - phone \n");
+
     if (iResult == SOCKET_ERROR)
     {
+        printf("couldnt connect to socket \n");
         closesocket(socket);
         setSocket(INVALID_SOCKET);
         socket = INVALID_SOCKET;
@@ -90,15 +95,18 @@ int Client::connectToServer(SOCKET socket, struct addrinfo *result)
     {
         printf("the sockets are connected !!!? \n");
         // send the info for the handshake
-
+        sendHandShake();
         return 0;
     }
 
+    printf("just returninng nothing - phone connect to server \n");
     return -1;
 }
 
 int Client::sendHandShake()
 {
+
+    printf("starting handshake \n");
     SOCKET socket = getSocket();
 
     char buffer[256];

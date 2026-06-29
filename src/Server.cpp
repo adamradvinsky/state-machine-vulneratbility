@@ -80,7 +80,6 @@ SOCKET Server::SetUpServerSocket()
 
 void Server::ActiveServerSocket(SOCKET ListenSocket)
 {
-
     // tangent socket for private conversation so listening socket can listen
     while (1)
     {
@@ -89,6 +88,7 @@ void Server::ActiveServerSocket(SOCKET ListenSocket)
         // listening until find a connection
         printf("waiting for a connection request \n");
         privateSocket = accept(ListenSocket, NULL, NULL);
+
         if (privateSocket == INVALID_SOCKET)
         {
             printf("accept failed: %d \n", WSAGetLastError());
@@ -96,6 +96,7 @@ void Server::ActiveServerSocket(SOCKET ListenSocket)
             WSACleanup();
             return;
         }
+
         printf("sending off a socket to a private connection with client \n");
         CreateConnection(privateSocket);
     }
@@ -107,7 +108,7 @@ void Server::ActiveServerSocket(SOCKET ListenSocket)
 
 void Server::CreateConnection(SOCKET privateSocket)
 {
-
+    printf("creating connection - ft \n");
     char buffer[256];
     // recieve name
     memset(buffer, 0, 256);
