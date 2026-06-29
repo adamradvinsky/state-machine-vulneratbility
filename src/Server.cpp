@@ -78,10 +78,10 @@ void Server::ActiveServerSocket(SOCKET ListenSocket)
 {
 
     // tangent socket for private conversation so listening socket can listen
-
-    for (int i = 0; i < 4; i++)
+    while (1)
     {
         SOCKET privateSocket = INVALID_SOCKET;
+
         // listening until find a connection
         printf("waiting for a connection request \n");
         privateSocket = accept(ListenSocket, NULL, NULL);
@@ -107,38 +107,61 @@ void Server::CreateConnection(SOCKET privateSocket)
     char buffer[256];
     // recieve name
     memset(buffer, 0, 256);
+
+    // receiving the clients name
     int iResult = recv(privateSocket, buffer, 255, 0);
 
-    // check if have seen this client before
-    for (int i = 0; i < 5; i++)
+    // sending this servers name
+    char *pname = name.data();
+    int result = send(privateSocket, pname, strlen(pname), MSG_OOB);
+
+    result = checkSavedClients(buffer);
+    if (result >= 0)
     {
-        if (savedClients[i].name == buffer)
+        printf("i have this client saved \n");
+
+        memset(buffer, 0, 256);
+        iResult = recv(privateSocket, buffer, 255, 0);
+
+        if (checkLTK(result, buffer))
         {
-            if (savedClients[i].LTK == LTK)
-            {
-                // we chilin let him through
-                PrivateServerConnectionEnCrypted(privateSocket);
-            }
-            else
-            {
-                PrivateServerConnectionUnEnCrypted(privateSocket);
-                // just do unencrypted
-            }
+            // ltks MATCHED therefor encrypted
+            PrivateServerConnectionEnCrypted(privateSocket);
+        }
+        else
+        {
+            // ltks didnt match so just do unencrypted
+            PrivateServerConnectionUnEnCrypted(privateSocket);
         }
     }
+    else
+    {
+        printf("i DONT have this client saved \n");
 
-    // must be first time here so set up handshake
-
-    int b = GenerateLTK();
-    // add name and ltk key to the array
-    PrivateServerConnectionEnCrypted(privateSocket);
+        // create new entry
+    }
 }
 
-bool Server::checkSavedClients(char * name)
+bool Server::checkLTK(int a, char *buffer)
 {
-    for (int i = 0; i < 5; i++)
+    int potLTK = std::stoi(buffer);
+    if (savedClients[a].LTK == potLTK)
     {
-        if (savedClients[i].name == name)
+        printf("the ltks match \n");
+        return true;
+    }
+    else
+    {
+        printf("the ltks DONT match \n");
+        return false;
+    }
+}
+
+int Server::checkSavedClients(char *name)
+{
+    for (int i = 0; i < savedClients.size(); i++)
+    {
+        if (strcmp(savedClients[i].name.data(), name) == 0)
         {
             // have seen this client before
             return true;

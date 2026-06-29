@@ -370,4 +370,9 @@ CMakeFiles/smv.dir/src/Client.cpp.obj: \
  C:/msys64/ucrt64/include/ws2ipdef.h C:/msys64/ucrt64/include/in6addr.h \
  C:/msys64/ucrt64/include/psdk_inc/_ip_mreq1.h \
  C:/msys64/ucrt64/include/mstcpip.h \
- C:/msys64/ucrt64/include/c++/15.2.0/cstring
+ C:/msys64/ucrt64/include/c++/15.2.0/cstring \
+ C:/msys64/ucrt64/include/c++/15.2.0/vector \
+ C:/msys64/ucrt64/include/c++/15.2.0/bits/stl_uninitialized.h \
+ C:/msys64/ucrt64/include/c++/15.2.0/bits/stl_vector.h \
+ C:/msys64/ucrt64/include/c++/15.2.0/bits/stl_bvector.h \
+ C:/msys64/ucrt64/include/c++/15.2.0/bits/vector.tcc

@@ -3,12 +3,13 @@
 #include <limits>
 #include <winsock2.h>
 #include <ws2tcpip.h>
+#include <vector>
 
-struct client{
+struct client
+{
 
     std::string name;
     int LTK;
-
 };
 
 class Server
@@ -16,16 +17,17 @@ class Server
 
 public:
     Server();
-    static int LTK;
+    static std::string name;
 
-    // can only save 5 clients 
-    static client savedClients[5];
+    static bool checkLTK(int a, char *potLTK);
+
 private:
+    static std::vector<client> savedClients;
     SOCKET SetUpServerSocket();
     void ActiveServerSocket(SOCKET ListenSocket);
     void CreateConnection(SOCKET privateSocket);
     void PrivateServerConnectionEnCrypted(SOCKET privateSocket);
     void PrivateServerConnectionUnEnCrypted(SOCKET privateSocket);
     int GenerateLTK();
-    bool checkSavedClients(char* name);
+    int checkSavedClients(char *name);
 };
