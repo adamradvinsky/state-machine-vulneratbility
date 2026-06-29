@@ -1,6 +1,10 @@
 #include "../include/Server.h"
 #define DEFAULT_PORT "27015"
 
+std::vector<client> Server::savedClients;
+std::string Server::name;
+
+
 Server::Server()
 {
     SOCKET serverSocket = SetUpServerSocket();

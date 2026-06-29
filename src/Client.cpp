@@ -1,6 +1,10 @@
 #include "../include/Client.h"
 #define DEFAULT_PORT "27015"
 
+std::vector<server> Client::savedServers;
+std::string Client::name;
+
+
 Client::Client()
 {
     SOCKET clientSocket = INVALID_SOCKET;
@@ -100,11 +104,11 @@ int Client::sendHandShake()
     // recieve name
     memset(buffer, 0, 256);
 
-    char *name = getName().data();
-    int length = strlen(name);
+    char *pname = name.data();
+    int length = strlen(pname);
 
     // sending name
-    int result = send(socket, name, length, MSG_OOB);
+    int result = send(socket, pname, length, MSG_OOB);
 
     // recieving the servers name
     int iResult = recv(socket, buffer, 255, 0);
@@ -116,10 +120,10 @@ int Client::sendHandShake()
         // server has been saved before
         printf("the server HAS been saved before \n");
 
-        std::string ltk = std::to_string(savedServers[result].LTK);
-        char *pltk = ltk.data();
-        printf("sending LTK - client \n");
-        result = send(socket, pltk, strlen(pltk), MSG_OOB);
+        // std::string ltk = std::to_string(savedServers[result].LTK);
+        // char *pltk = ltk.data();
+        // printf("sending LTK - client \n");
+        // result = send(socket, pltk, strlen(pltk), MSG_OOB);
     }
     else
     {
