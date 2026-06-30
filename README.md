@@ -128,7 +128,19 @@ These simplifications are intentional. The goal is to isolate and demonstrate th
 
 ---
 
-## References
+## What I Learned
+
+Before building this I thought the interesting part of a security vulnerability was always the cryptography — that attacks meant breaking encryption or guessing a key. What the BLESA paper taught me is that the cryptography in BLE is actually fine. The LTK generation, the key exchange, the encryption itself — none of that was broken. The vulnerability was purely in the **logic of what to do when the crypto fails**, and the answer was just missing a single termination call.
+
+That reframing changed how I think about secure systems. A system isn't secure because it has encryption — it's secure because every failure path is handled correctly. The BLE developers who wrote the Android and Linux stacks almost certainly knew encryption was required. They just didn't explicitly handle the case where it didn't work, and defaulted to continuing instead of aborting. That silent fallback is what turned a well-designed protocol into an exploitable vulnerability across billions of devices.
+
+Building this demo also gave me a concrete understanding of what a **bond database** is and why it exists — it's the mechanism that makes reconnection fast and user-friendly, but it's also the exact thing an attacker exploits by cloning an identity that the database already trusts. The tension between usability (skip re-pairing) and security (verify identity every time) is a real engineering tradeoff, and BLESA is what happens when that tradeoff is made without thinking through all the failure cases.
+
+On the implementation side, this was my first time building a multi-process Winsock application in C++ and managing a handshake protocol from scratch — coordinating send/recv ordering between two programs, handling socket lifecycle correctly, and structuring code so the vulnerable and secure versions are easy to compare directly.
+
+---
+
+
 
 - [BLESA Paper (USENIX WOOT 2020)](https://www.usenix.org/conference/woot20/presentation/wu)
 - [BlueShield: Detection Counterpart](https://www.usenix.org/conference/raid20/presentation/wu)
