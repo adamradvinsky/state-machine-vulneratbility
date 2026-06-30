@@ -17,11 +17,13 @@ class Server
 
 public:
     Server();
-    static std::string name;
+    void setName(std::string newName);
 
+    
     static bool checkLTK(int a, char *potLTK);
 
 private:
+    static std::string name;
     static std::vector<client> savedClients;
     SOCKET SetUpServerSocket();
     void ActiveServerSocket(SOCKET ListenSocket);

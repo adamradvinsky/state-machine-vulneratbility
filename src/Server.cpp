@@ -4,9 +4,15 @@
 std::vector<client> Server::savedClients;
 std::string Server::name;
 
-
 Server::Server()
 {
+
+    client phone;
+    phone.wname = "phone";
+    phone.LTK = 12345;
+
+    savedClients.push_back(phone);
+
     SOCKET serverSocket = SetUpServerSocket();
     if (serverSocket != INVALID_SOCKET)
     {
@@ -115,10 +121,12 @@ void Server::CreateConnection(SOCKET privateSocket)
 
     // receiving the clients name
     int iResult = recv(privateSocket, buffer, 255, 0);
+    printf("the clients name is: %s \n", buffer);
 
     // sending this servers name
     char *pname = name.data();
     int result = send(privateSocket, pname, strlen(pname), MSG_OOB);
+    printf("sending my name which is: %s \n", name);
 
     result = checkSavedClients(buffer);
     if (result >= 0)
@@ -145,6 +153,12 @@ void Server::CreateConnection(SOCKET privateSocket)
 
         // create new entry
     }
+}
+
+void Server::setName(std::string newName)
+{
+
+    name = newName;
 }
 
 bool Server::checkLTK(int a, char *buffer)

@@ -21,12 +21,12 @@ public:
     SOCKET getSocket();
     void sendMessage(char *message);
     SOCKET SetUpClientSocket();
-    void setName();
+    void setName(std::string newName);
     std::string getName();
+    static std::string name;
 
 private:
     static std::vector<server> savedServers;
-    static std::string name;
     static struct addrinfo *info;
     SOCKET curSocket;
     int connectToServer(SOCKET socket, struct addrinfo *result);

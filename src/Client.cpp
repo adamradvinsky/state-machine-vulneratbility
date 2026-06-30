@@ -7,6 +7,12 @@ struct addrinfo *Client::info = NULL;
 
 Client::Client()
 {
+
+    server whoop;
+    whoop.name = "whoop";
+    whoop.LTK = 12345;
+
+    savedServers.push_back(whoop);
     SOCKET clientSocket = INVALID_SOCKET;
     clientSocket = SetUpClientSocket();
 
@@ -17,7 +23,6 @@ Client::Client()
     }
 }
 
-
 void Client::setSocket(SOCKET newsocket)
 {
     curSocket = newsocket;
@@ -26,6 +31,11 @@ void Client::setSocket(SOCKET newsocket)
 SOCKET Client::getSocket()
 {
     return curSocket;
+}
+
+void Client::setName(std::string newName)
+{
+    name = newName;
 }
 
 SOCKET Client::SetUpClientSocket()
@@ -59,7 +69,7 @@ SOCKET Client::SetUpClientSocket()
     else
     {
         printf("client socket has been opened \n");
-        ///setSocket(ConnectSocket);
+        /// setSocket(ConnectSocket);
         return ConnectSocket;
     }
     return INVALID_SOCKET;
@@ -118,9 +128,13 @@ int Client::sendHandShake()
 
     // sending name
     int result = send(socket, pname, length, MSG_OOB);
+    std::cout << "sending my name which is: "<< std::endl;
+    printf("sending my name which is: %s \n", pname);
 
     // recieving the servers name
     int iResult = recv(socket, buffer, 255, 0);
+    printf("the phones name is: %s \n", buffer);
+
 
     result = checkSavedServers(buffer);
 
@@ -140,11 +154,9 @@ int Client::sendHandShake()
         printf("the server has not been saved before \n");
 
         // create new entry
-
     }
 
     return -1;
-
 }
 
 int Client::checkSavedServers(char *name)

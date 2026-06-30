@@ -11,6 +11,7 @@
 int createServerSocket(char *ip);
 int createClientSocket(char *ip);
 
+
 int main(int argc, char **argv)
 {
 
@@ -28,7 +29,7 @@ int main(int argc, char **argv)
     }
     else
     {
-        printf("winsock has been initialized llllllllllll\n");
+        printf("winsock has been initialized llllllllllll\n")
     }
 
     char input;
@@ -40,11 +41,12 @@ int main(int argc, char **argv)
     if (input == 'a')
     {
         Server *server = new Server();
+        server->setName("whoop");
     }
     else
     {
         Client *client = new Client();
-        
+        client->setName("phone");
         
     }
 
